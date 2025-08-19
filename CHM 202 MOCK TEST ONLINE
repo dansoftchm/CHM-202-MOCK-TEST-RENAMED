@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHM 202 Mock by Daniel Leonard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .admin-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            z-index: 1000;
+        }
+        
+        .timer-display {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.9);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            color: #333;
+            z-index: 1000;
+        }
+        
+        .admin-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            overflow-y: auto;
+        }
+        
+        .admin-content {
+            background: white;
+            margin: 50px auto;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 900px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .test-content {
+            padding: 30px;
+        }
+        
+        .question-container {
+            margin-bottom: 25px;
+            padding: 20px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            background: #f8fafc;
+            transition: all 0.3s ease;
+        }
+        
+        .question-container:hover {
+            border-color: #4facfe;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 1.05em;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 12px;
+        }
+        
+        .options {
+            display: grid;
+            gap: 8px;
+        }
+        
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            font-size: 0.9em;
+        }
+        
+        .option:hover {
+            border-color: #4facfe;
+            background: #f0f9ff;
+        }
+        
+        .option input[type="radio"] {
+            margin-right: 10px;
+            transform: scale(1.1);
+        }
+        
+        .option.selected {
+            border-color: #4facfe;
+            background: #e0f2fe;
+        }
+        
+        .name-section {
+            margin-bottom: 30px;
+            padding: 25px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            background: #f8fafc;
+        }
+        
+        .name-section input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+        
+        .submit-section {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #e1e8ed;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        .results {
+            display: none;
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .results.show {
+            display: block;
+        }
+        
+        .score-good {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+        
+        .score-average {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        
+        .score-poor {
+            background: linear-gradient(135deg, #fc4a1a 0%, #f7b733 100%);
+            color: white;
+        }
+        
+        .thank-you-message {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .thank-you-message.show {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .detailed-results {
+            text-align: left;
+            margin-top: 20px;
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .question-result {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+        
+        .question-result.correct {
+            background: rgba(17, 153, 142, 0.2);
+            border-left: 4px solid #11998e;
+        }
+        
+        .question-result.incorrect {
+            background: rgba(252, 74, 26, 0.2);
+            border-left: 4px solid #fc4a1a;
+        }
+        
+        .student-responses {
+            margin-top: 20px;
+        }
+        
+        .student-card {
+            background: #f8fafc;
+            border: 1px solid #e1e8ed;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .timer-controls {
+            background: #f0f9ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .restart-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .restart-btn:hover {
+            background: white;
+            color: #333;
+        }
+        
+        .stats-summary {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .clear-data-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="timer-display" id="timerDisplay">Time: --:--</div>
+    <button class="admin-btn" onclick="showAdminLogin()">Admin</button>
+    
+    <div class="container">
+        <div class="header">
+            <h1>CHM 202 Mock</h1>
+            <p>50 Questions on Molecular Symmetry, Molecular Orbitals, Quantum Numbers & VSEPR Theory</p>
+            <p style="font-size: 0.9em; opacity: 0.8; margin-top: 10px;">by Daniel Leonard</p>
+        </div>
+        
+        <div class="test-content">
+            <div class="thank-you-message" id="thankYouMessage">
+                <h2>🎉 Thank You for Taking the Test! 🎉</h2>
+                <p>Your responses have been submitted successfully. Good luck with your studies!</p>
+            </div>
+            
+            <div class="name-section" id="nameSection">
+                <label for="studentName" style="display: block; font-size: 1.1em; font-weight: 600; color: #2d3748; margin-bottom: 10px;">Student Name:</label>
+                <input type="text" id="studentName" name="studentName" placeholder="Enter your full name" required>
+            </div>
+            
+            <form id="chemistryTest">
+                <!-- Molecular Symmetry Questions (1-13) -->
+                <div class="question-container">
+                    <div class="question">1. Which of the following molecules has a C₂ᵥ point group?</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q1" value="a">a) BF₃</label>
+                        <label class="option"><input type="radio" name="q1" value="b">b) H₂O</label>
+                        <label class="option"><input type="radio" name="q1" value="c">c) CH₄</label>
+                        <label class="option"><input type="radio" name="q1" value="d">d) SF₆</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">2. How many symmetry elements does benzene (C₆H₆) possess?</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q2" value="a">a) 12</label>
+                        <label class="option"><input type="radio" name="q2" value="b">b) 24</label>
+                        <label class="option"><input type="radio" name="q2" value="c">c) 18</label>
+                        <label class="option"><input type="radio" name="q2" value="d">d) 6</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">3. Which point group does ammonia (NH₃) belong to?</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q3" value="a">a) C₃ᵥ</label>
+                        <label class="option"><input type="radio" name="q3" value="b">b) D₃ₕ</label>
+                        <label class="option"><input type="radio" name="q3" value="c">c) C₃ₕ</label>
+                        <label class="option"><input type="radio" name="q3" value="d">d) Tₑ</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">4. A molecule with an inversion center (i) belongs to which type of point group?</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q4" value="a">a) Cₙ</label>
+                        <label class="option"><input type="radio" name="q4" value="b">b) Cₙᵥ</label>
+                        <label class="option"><input type="radio" name="q4" value="c">c) Dₙₕ or centrosymmetric</label>
+                        <label class="option"><input type="radio" name="q4" value="d">d) Tₑ</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">5. Which symmetry operation converts one enantiomer to another?</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q5" value="a">a) Rotation</label>
+                        <label class="option"><input type="radio" name="q5" value="b">b) Reflection</label>
+                        <label class="option"><input type="radio" name="q5" value="c">c) Inversion</label>
+                        <label class="option"><input type="radio" name="q5" value="d">d) Improper rotation</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">6. What is the point group of trans-dichloroethene?</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q6" value="a">a) C₂ₕ</label>
+                        <label class="option"><input type="radio" name="q6" value="b">b) C₂ᵥ</label>
+                        <label class="option"><input type="radio" name="q6" value="c">c) C₂</label>
+                        <label class="option"><input type="radio" name="q6" value="d">d) D₂ₕ</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">7. Which molecule has D₃ₕ symmetry?</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q7" value="a">a) NH₃</label>
+                        <label class="option"><input type="radio" name="q7" value="b">b) BF₃</label>
+                        <label class="option"><input type="radio" name="q7" value="c">c) PCl₅</label>
+                        <label class="option"><input type="radio" name="q7" value="d">d) CHCl₃</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">8. A C₃ rotation axis means the molecule is identical after rotation by:</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q8" value="a">a) 60°</label>
+                        <label class="option"><input type="radio" name="q8" value="b">b) 90°</label>
+                        <label class="option"><input type="radio" name="q8" value="c">c) 120°</label>
+                        <label class="option"><input type="radio" name="q8" value="d">d) 180°</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">9. Which symmetry element is NOT present in methane (CH₄)?</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q9" value="a">a) C₃ rotation axes</label>
+                        <label class="option"><input type="radio" name="q9" value="b">b) C₂ rotation axes</label>
+                        <label class="option"><input type="radio" name="q9" value="c">c) Mirror planes</label>
+                        <label class="option"><input type="radio" name="q9" value="d">d) Inversion center</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">10. The point group of a linear molecule like CO₂ is:</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q10" value="a">a) C∞ᵥ</label>
+                        <label class="option"><input type="radio" name="q10" value="b">b) D∞ₕ</label>
+                        <label class="option"><input type="radio" name="q10" value="c">c) C₂ᵥ</label>
+                        <label class="option"><input type="radio" name="q10" value="d">d) D₂ₕ</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">11. What is the point group of cis-dichloroethene?</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q11" value="a">a) C₂ₕ</label>
+                        <label class="option"><input type="radio" name="q11" value="b">b) C₂ᵥ</label>
+                        <label class="option"><input type="radio" name="q11" value="c">c) C₂</label>
+                        <label class="option"><input type="radio" name="q11" value="d">d) Cₛ</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">12. Which of the following has the highest symmetry?</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q12" value="a">a) Square planar XeF₄</label>
+                        <label class="option"><input type="radio" name="q12" value="b">b) Tetrahedral CH₄</label>
+                        <label class="option"><input type="radio" name="q12" value="c">c) Octahedral SF₆</label>
+                        <label class="option"><input type="radio" name="q12" value="d">d) Trigonal planar BF₃</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">13. The S₄ improper rotation axis involves:</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q13" value="a">a) Rotation by 90° followed by reflection</label>
+                        <label class="option"><input type="radio" name="q13" value="b">b) Rotation by 180° followed by reflection</label>
+                        <label class="option"><input type="radio" name="q13" value="c">c) Only rotation by 90°</label>
+                        <label class="option"><input type="radio" name="q13" value="d">d) Only reflection</label>
+                    </div>
+                </div>
+
+                <!-- Molecular Orbital Theory Questions (14-25) -->
+                <div class="question-container">
+                    <div class="question">14. Which of the following options is false?</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q14" value="a">a) The number of molecular orbitals produced must be equal to the number of atomic orbitals that combined</label>
+                        <label class="option"><input type="radio" name="q14" value="b">b) Close energies of the atomic orbitals enhance stronger and more efficient overlap</label>
+                        <label class="option"><input type="radio" name="q14" value="c">c) The usage of the pi orbitals and electrons in F₂ is a sure indication that F=F is formed</label>
+                        <label class="option"><input type="radio" name="q14" value="d">d) N₂ and O₂ form the boundary for the σ-π crossover</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">15. In antibonding molecular orbitals, nodes represent regions of:</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q15" value="a">a) efficient overlap</label>
+                        <label class="option"><input type="radio" name="q15" value="b">b) in-phase combination</label>
+                        <label class="option"><input type="radio" name="q15" value="c">c) zero electron density</label>
+                        <label class="option"><input type="radio" name="q15" value="d">d) out-of-phase recombination</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">16. Which of the following is the correct Molecular orbital electronic configuration for C₂?</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q16" value="a">a) σ1s² σ*1s² σ2s² σ*2s² π2py² π2pz² σ2px²</label>
+                        <label class="option"><input type="radio" name="q16" value="b">b) σ1s² σ*1s² σ2s² σ*2s² π2py² π2pz¹ σ2px⁰</label>
+                        <label class="option"><input type="radio" name="q16" value="c">c) σ1s² σ*1s² σ2s² σ*2s² π2py² π2pz² σ2px⁰</label>
+                        <label class="option"><input type="radio" name="q16" value="d">d) σ1s² σ*1s² σ2s² σ*2s² π2py² π2pz² σ2px¹</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">17. Which one of the following statements is false?</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q17" value="a">a) Valence bond theory and molecular orbital theory can be described as two different views of the same thing</label>
+                        <label class="option"><input type="radio" name="q17" value="b">b) Molecular orbitals are generally described as being more delocalized than hybridized atomic orbitals</label>
+                        <label class="option"><input type="radio" name="q17" value="c">c) One of the shortcomings of molecular orbital theory is its inability to account for a triple bond in the nitrogen molecule, N₂</label>
+                        <label class="option"><input type="radio" name="q17" value="d">d) When one considers the molecular orbitals resulting from the overlap of any two specific atomic orbitals, the bonding orbitals are always gerade or ungerade</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">18. The obvious difference between stabilization energy (SE) and bond order (BO) is that:</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q18" value="a">a) SE is twice BO</label>
+                        <label class="option"><input type="radio" name="q18" value="b">b) SE is equal to BO</label>
+                        <label class="option"><input type="radio" name="q18" value="c">c) SE is half BO</label>
+                        <label class="option"><input type="radio" name="q18" value="d">d) SE is equal to the square of BO</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">19. The equation Ψ²AB = (C₁²ΨA² + 2C₁C₂ΨAΨB + C₂²ΨB²) was derived from the Linear Combination of Atomic Orbitals. Which of the following is true?</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q19" value="a">a) There is a complete combination (mixing) of wave functions of A and B</label>
+                        <label class="option"><input type="radio" name="q19" value="b">b) There is a partial combination (mixing) of wave functions of A and B</label>
+                        <label class="option"><input type="radio" name="q19" value="c">c) Either C₁²ΨA² or C₂²ΨB² is an indication of complete combination (mixing) of wave functions of A and B</label>
+                        <label class="option"><input type="radio" name="q19" value="d">d) a and b</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">20. In the molecular orbital theory, bonding and antibonding molecular orbitals ______ and ______ the molecule under consideration:</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q20" value="a">a) stabilize and re-stabilize</label>
+                        <label class="option"><input type="radio" name="q20" value="b">b) destabilize and re-stabilize</label>
+                        <label class="option"><input type="radio" name="q20" value="c">c) stabilize and destabilize</label>
+                        <label class="option"><input type="radio" name="q20" value="d">d) none of the aforementioned</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">21. Which of O₂ and O₂⁻ (a one-electron reduced diatomic oxygen) is expected to have a lower bond dissociation enthalpy for its oxygen-oxygen bond?</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q21" value="a">a) O₂</label>
+                        <label class="option"><input type="radio" name="q21" value="b">b) O₂⁻</label>
+                        <label class="option"><input type="radio" name="q21" value="c">c) both O₂ and O₂⁻</label>
+                        <label class="option"><input type="radio" name="q21" value="d">d) neither O₂ nor O₂⁻</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">22. Which molecular orbital has the highest energy in homonuclear diatomic molecules of the second period?</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q22" value="a">a) σ*2pz</label>
+                        <label class="option"><input type="radio" name="q22" value="b">b) π*2px</label>
+                        <label class="option"><input type="radio" name="q22" value="c">c) π*2py</label>
+                        <label class="option"><input type="radio" name="q22" value="d">d) σ*2s</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">23. The bond order of N₂⁺ is:</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q23" value="a">a) 2.5</label>
+                        <label class="option"><input type="radio" name="q23" value="b">b) 3.0</label>
+                        <label class="option"><input type="radio" name="q23" value="c">c) 1.5</label>
+                        <label class="option"><input type="radio" name="q23" value="d">d) 2.0</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">24. Which of the following molecules is paramagnetic?</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q24" value="a">a) N₂</label>
+                        <label class="option"><input type="radio" name="q24" value="b">b) F₂</label>
+                        <label class="option"><input type="radio" name="q24" value="c">c) O₂</label>
+                        <label class="option"><input type="radio" name="q24" value="d">d) C₂</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">25. π-bonding is not possible in:</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q25" value="a">a) s-s overlap</label>
+                        <label class="option"><input type="radio" name="q25" value="b">b) s-p overlap</label>
+                        <label class="option"><input type="radio" name="q25" value="c">c) p-p overlap</label>
+                        <label class="option"><input type="radio" name="q25" value="d">d) d-d overlap</label>
+                    </div>
+                </div>
+
+                <!-- Quantum Numbers Questions (26-38) -->
+                <div class="question-container">
+                    <div class="question">26. What are the possible values of the magnetic quantum number (mₗ) for l = 3?</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q26" value="a">a) -3, -2, -1, 0, +1, +2, +3</label>
+                        <label class="option"><input type="radio" name="q26" value="b">b) -2, -1, 0, +1, +2</label>
+                        <label class="option"><input type="radio" name="q26" value="c">c) 0, 1, 2, 3</label>
+                        <label class="option"><input type="radio" name="q26" value="d">d) -1, 0, +1</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">27. Which quantum number determines the shape of an orbital?</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q27" value="a">a) Principal quantum number (n)</label>
+                        <label class="option"><input type="radio" name="q27" value="b">b) Angular momentum quantum number (l)</label>
+                        <label class="option"><input type="radio" name="q27" value="c">c) Magnetic quantum number (mₗ)</label>
+                        <label class="option"><input type="radio" name="q27" value="d">d) Spin quantum number (mₛ)</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">28. For n = 4, what are the possible values of l?</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q28" value="a">a) 0, 1, 2, 3</label>
+                        <label class="option"><input type="radio" name="q28" value="b">b) 1, 2, 3, 4</label>
+                        <label class="option"><input type="radio" name="q28" value="c">c) 0, 1, 2, 3, 4</label>
+                        <label class="option"><input type="radio" name="q28" value="d">d) -4, -3, -2, -1, 0, +1, +2, +3, +4</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">29. The spin quantum number (mₛ) can have values of:</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q29" value="a">a) +½ only</label>
+                        <label class="option"><input type="radio" name="q29" value="b">b) -½ only</label>
+                        <label class="option"><input type="radio" name="q29" value="c">c) +½ or -½</label>
+                        <label class="option"><input type="radio" name="q29" value="d">d) 0, +½, or -½</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">30. How many orbitals are in the 5d subshell?</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q30" value="a">a) 3</label>
+                        <label class="option"><input type="radio" name="q30" value="b">b) 5</label>
+                        <label class="option"><input type="radio" name="q30" value="c">c) 7</label>
+                        <label class="option"><input type="radio" name="q30" value="d">d) 10</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">31. Which set of quantum numbers is NOT allowed?</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q31" value="a">a) n=3, l=2, mₗ=1, mₛ=+½</label>
+                        <label class="option"><input type="radio" name="q31" value="b">b) n=4, l=3, mₗ=-2, mₛ=-½</label>
+                        <label class="option"><input type="radio" name="q31" value="c">c) n=2, l=3, mₗ=0, mₛ=+½</label>
+                        <label class="option"><input type="radio" name="q31" value="d">d) n=5, l=0, mₗ=0, mₛ=-½</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">32. The maximum number of electrons in the 4f subshell is:</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q32" value="a">a) 10</label>
+                        <label class="option"><input type="radio" name="q32" value="b">b) 14</label>
+                        <label class="option"><input type="radio" name="q32" value="c">c) 18</label>
+                        <label class="option"><input type="radio" name="q32" value="d">d) 6</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">33. Which orbital designation corresponds to l = 2?</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q33" value="a">a) s</label>
+                        <label class="option"><input type="radio" name="q33" value="b">b) p</label>
+                        <label class="option"><input type="radio" name="q33" value="c">c) d</label>
+                        <label class="option"><input type="radio" name="q33" value="d">d) f</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">34. For a 5f orbital, what are the values of n and l?</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q34" value="a">a) n=5, l=0</label>
+                        <label class="option"><input type="radio" name="q34" value="b">b) n=5, l=1</label>
+                        <label class="option"><input type="radio" name="q34" value="c">c) n=5, l=2</label>
+                        <label class="option"><input type="radio" name="q34" value="d">d) n=5, l=3</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">35. The total number of orbitals in the n=5 shell is:</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q35" value="a">a) 5</label>
+                        <label class="option"><input type="radio" name="q35" value="b">b) 10</label>
+                        <label class="option"><input type="radio" name="q35" value="c">c) 25</label>
+                        <label class="option"><input type="radio" name="q35" value="d">d) 50</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">36. Which of the following electron configurations violates Hund's rule?</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q36" value="a">a) 2p: ↑ ↑ ↑</label>
+                        <label class="option"><input type="radio" name="q36" value="b">b) 2p: ↑↓ ↑ ↑</label>
+                        <label class="option"><input type="radio" name="q36" value="c">c) 3d: ↑ ↑ ↑ ↑ ↑</label>
+                        <label class="option"><input type="radio" name="q36" value="d">d) 4f: ↑ ↑ ↑ ↑ ↑ ↑ ↑</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">37. The azimuthal quantum number for a p orbital is:</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q37" value="a">a) 0</label>
+                        <label class="option"><input type="radio" name="q37" value="b">b) 1</label>
+                        <label class="option"><input type="radio" name="q37" value="c">c) 2</label>
+                        <label class="option"><input type="radio" name="q37" value="d">d) 3</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">38. Which principle states that no two electrons in an atom can have the same set of four quantum numbers?</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q38" value="a">a) Aufbau principle</label>
+                        <label class="option"><input type="radio" name="q38" value="b">b) Hund's rule</label>
+                        <label class="option"><input type="radio" name="q38" value="c">c) Pauli exclusion principle</label>
+                        <label class="option"><input type="radio" name="q38" value="d">d) Heisenberg uncertainty principle</label>
+                    </div>
+                </div>
+
+                <!-- VSEPR Theory Questions (39-50) -->
+                <div class="question-container">
+                    <div class="question">39. What is the molecular geometry of SF₄?</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q39" value="a">a) Tetrahedral</label>
+                        <label class="option"><input type="radio" name="q39" value="b">b) See-saw</label>
+                        <label class="option"><input type="radio" name="q39" value="c">c) Square planar</label>
+                        <label class="option"><input type="radio" name="q39" value="d">d) Trigonal bipyramidal</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">40. Which molecule has a bent (angular) geometry?</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q40" value="a">a) CO₂</label>
+                        <label class="option"><input type="radio" name="q40" value="b">b) BeCl₂</label>
+                        <label class="option"><input type="radio" name="q40" value="c">c) SO₂</label>
+                        <label class="option"><input type="radio" name="q40" value="d">d) BF₃</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">41. What is the electron geometry around the central atom in PCl₅?</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q41" value="a">a) Tetrahedral</label>
+                        <label class="option"><input type="radio" name="q41" value="b">b) Trigonal bipyramidal</label>
+                        <label class="option"><input type="radio" name="q41" value="c">c) Octahedral</label>
+                        <label class="option"><input type="radio" name="q41" value="d">d) Square pyramidal</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">42. The molecular geometry of XeF₄ is:</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q42" value="a">a) Tetrahedral</label>
+                        <label class="option"><input type="radio" name="q42" value="b">b) Square planar</label>
+                        <label class="option"><input type="radio" name="q42" value="c">c) See-saw</label>
+                        <label class="option"><input type="radio" name="q42" value="d">d) Octahedral</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">43. Which molecule has trigonal planar geometry?</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q43" value="a">a) NH₃</label>
+                        <label class="option"><input type="radio" name="q43" value="b">b) BF₃</label>
+                        <label class="option"><input type="radio" name="q43" value="c">c) CH₄</label>
+                        <label class="option"><input type="radio" name="q43" value="d">d) H₂O</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">44. The bond angle in a tetrahedral molecule is approximately:</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q44" value="a">a) 90°</label>
+                        <label class="option"><input type="radio" name="q44" value="b">b) 109.5°</label>
+                        <label class="option"><input type="radio" name="q44" value="c">c) 120°</label>
+                        <label class="option"><input type="radio" name="q44" value="d">d) 180°</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">45. Which factor does NOT influence molecular geometry according to VSEPR theory?</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q45" value="a">a) Bonding electron pairs</label>
+                        <label class="option"><input type="radio" name="q45" value="b">b) Lone electron pairs</label>
+                        <label class="option"><input type="radio" name="q45" value="c">c) Nuclear charge</label>
+                        <label class="option"><input type="radio" name="q45" value="d">d) Electron-electron repulsion</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">46. The molecular geometry of ClF₃ is:</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q46" value="a">a) Trigonal planar</label>
+                        <label class="option"><input type="radio" name="q46" value="b">b) T-shaped</label>
+                        <label class="option"><input type="radio" name="q46" value="c">c) Trigonal pyramidal</label>
+                        <label class="option"><input type="radio" name="q46" value="d">d) Linear</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">47. How many lone pairs are on the central atom in SF₆?</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q47" value="a">a) 0</label>
+                        <label class="option"><input type="radio" name="q47" value="b">b) 1</label>
+                        <label class="option"><input type="radio" name="q47" value="c">c) 2</label>
+                        <label class="option"><input type="radio" name="q47" value="d">d) 3</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">48. According to VSEPR theory, lone pairs occupy _____ space than bonding pairs.</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q48" value="a">a) less</label>
+                        <label class="option"><input type="radio" name="q48" value="b">b) more</label>
+                        <label class="option"><input type="radio" name="q48" value="c">c) the same</label>
+                        <label class="option"><input type="radio" name="q48" value="d">d) unpredictable</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">49. The molecular geometry of IF₅ is:</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q49" value="a">a) Trigonal bipyramidal</label>
+                        <label class="option"><input type="radio" name="q49" value="b">b) Square pyramidal</label>
+                        <label class="option"><input type="radio" name="q49" value="c">c) Octahedral</label>
+                        <label class="option"><input type="radio" name="q49" value="d">d) Pentagonal planar</label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">50. Which of the following has linear molecular geometry?</div>
+                    <div class="options">
+                        <label class="option"><input type="radio" name="q50" value="a">a) SO₂</label>
+                        <label class="option"><input type="radio" name="q50" value="b">b) H₂O</label>
+                        <label class="option"><input type="radio" name="q50" value="c">c) CO₂</label>
+                        <label class="option"><input type="radio" name="q50" value="d">d) NH₃</label>
+                    </div>
+                </div>
+            </form>
+            
+            <div class="submit-section">
+                <button type="button" class="submit-btn" onclick="submitTest()">Submit Test</button>
+            </div>
+            
+            <div class="results" id="results">
+                <h2 id="scoreTitle">Your Test Results</h2>
+                <p id="scoreText"></p>
+                <button class="restart-btn" onclick="restartTest()">Take Test Again</button>
+                <div class="detailed-results" id="detailedResults"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Admin Panel -->
+    <div class="admin-panel" id="adminPanel">
+        <div class="admin-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2>Admin Panel</h2>
+                <button onclick="closeAdminPanel()" style="background: #ff6b6b; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">Close</button>
+            </div>
+            
+            <div class="stats-summary">
+                <h3>Test Statistics</h3>
+                <div id="testStats">
+                    <p>Total submissions: <span id="totalSubmissions">0</span></p>
+                    <p>Average score: <span id="averageScore">0%</span></p>
+                    <p>Highest score: <span id="highestScore">0%</span></p>
+                </div>
+            </div>
+            
+            <div class="timer-controls">
+                <h3>Timer Controls</h3>
+                <div style="margin: 10px 0;">
+                    <label>Set Timer (minutes): </label>
+                    <input type="number" id="timerInput" value="90" min="1" max="300" style="padding: 5px; margin: 0 10px; border: 1px solid #ccc; border-radius: 3px;">
+                    <button onclick="startTimer()" style="background: #4CAF50; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; margin: 0 5px;">Start</button>
+                    <button onclick="pauseTimer()" style="background: #ff9800; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; margin: 0 5px;">Pause</button>
+                    <button onclick="resetTimer()" style="background: #f44336; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; margin: 0 5px;">Reset</button>
+                </div>
+                <div>Timer Status: <span id="timerStatus">Stopped</span></div>
+            </div>
+            
+            <div class="student-responses">
+                <h3>Student Responses</h3>
+                <div style="margin-bottom: 15px;">
+                    <button onclick="exportResponses()" style="background: #2196F3; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Export to CSV</button>
+                    <button onclick="clearAllData()" class="clear-data-btn">Clear All Data</button>
+                </div>
+                <div id="responsesList">
+                    <p>No submissions yet.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Test data and answers
+        const correctAnswers = {
+            q1: 'b', q2: 'b', q3: 'a', q4: 'c', q5: 'b', q6: 'a', q7: 'b', q8: 'c', q9: 'd', q10: 'b',
+            q11: 'b', q12: 'c', q13: 'a', q14: 'c', q15: 'c', q16: 'c', q17: 'c', q18: 'a', q19: 'a', q20: 'c',
+            q21: 'b', q22: 'a', q23: 'a', q24: 'c', q25: 'a', q26: 'a', q27: 'b', q28: 'a', q29: 'c', q30: 'b',
+            q31: 'c', q32: 'b', q33: 'c', q34: 'd', q35: 'c', q36: 'b', q37: 'b', q38: 'c', q39: 'b', q40: 'c',
+            q41: 'b', q42: 'b', q43: 'b', q44: 'b', q45: 'c', q46: 'b', q47: 'a', q48: 'b', q49: 'b', q50: 'c'
+        };
+
+        const questionTitles = {
+            q1: "Water molecule point group", q2: "Benzene symmetry elements", q3: "Ammonia point group", 
+            q4: "Inversion center", q5: "Enantiomer conversion", q6: "Trans-dichloroethene", q7: "D₃ₕ symmetry", 
+            q8: "C₃ rotation", q9: "Methane symmetry", q10: "Linear molecule CO₂", q11: "Cis-dichloroethene", 
+            q12: "Highest symmetry", q13: "S₄ improper rotation", q14: "MO theory false statement", 
+            q15: "Antibonding nodes", q16: "C₂ MO configuration", q17: "MO theory false statement", 
+            q18: "SE vs BO difference", q19: "LCAO equation", q20: "Bonding and antibonding", 
+            q21: "O₂ vs O₂⁻ bond strength", q22: "Highest energy MO", q23: "N₂⁺ bond order", 
+            q24: "Paramagnetic molecule", q25: "π-bonding impossibility", q26: "l=3 magnetic numbers", 
+            q27: "Orbital shape determinant", q28: "n=4 possible l values", q29: "Spin quantum values", 
+            q30: "5d orbitals count", q31: "Invalid quantum numbers", q32: "4f electron maximum", 
+            q33: "l=2 designation", q34: "5f orbital values", q35: "n=5 total orbitals", 
+            q36: "Hund's rule violation", q37: "p orbital azimuthal", q38: "Pauli exclusion", 
+            q39: "SF₄ geometry", q40: "Bent geometry", q41: "PCl₅ electron geometry", 
+            q42: "XeF₄ geometry", q43: "Trigonal planar", q44: "Tetrahedral angle", 
+            q45: "Non-influencing factor", q46: "ClF₃ geometry", q47: "SF₆ lone pairs", 
+            q48: "Lone pair space", q49: "IF₅ geometry", q50: "Linear geometry"
+        };
+
+        // Timer variables
+        let timerInterval;
+        let timeRemaining = 0;
+        let timerRunning = false;
+        let studentResponses = JSON.parse(localStorage.getItem('chm202Responses') || '[]');
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            updateAdminStats();
+        });
+
+        function setupEventListeners() {
+            // Add click listeners to all options
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const radio = this.querySelector('input[type="radio"]');
+                    if (radio) {
+                        radio.checked = true;
+                        // Remove selected class from siblings
+                        this.parentNode.querySelectorAll('.option').forEach(opt => {
+                            opt.classList.remove('selected');
+                        });
+                        // Add selected class to clicked option
+                        this.classList.add('selected');
+                    }
+                });
+            });
+        }
+
+        function submitTest() {
+            const studentName = document.getElementById('studentName').value.trim();
+            if (!studentName) {
+                alert('Please enter your name before submitting the test.');
+                return;
+            }
+
+            const form = document.getElementById('chemistryTest');
+            const formData = new FormData(form);
+            const answers = {};
+            let answeredCount = 0;
+
+            // Collect answers
+            for (let i = 1; i <= 50; i++) {
+                const answer = formData.get(`q${i}`);
+                if (answer) {
+                    answers[`q${i}`] = answer;
+                    answeredCount++;
+                }
+            }
+
+            if (answeredCount < 50) {
+                if (!confirm(`You have only answered ${answeredCount} out of 50 questions. Do you want to submit anyway?`)) {
+                    return;
+                }
+            }
+
+            // Calculate score
+            let correctCount = 0;
+            const detailedResults = [];
+
+            for (let i = 1; i <= 50; i++) {
+                const questionKey = `q${i}`;
+                const userAnswer = answers[questionKey] || '';
+                const correctAnswer = correctAnswers[questionKey];
+                const isCorrect = userAnswer === correctAnswer;
+                
+                if (isCorrect) correctCount++;
+                
+                detailedResults.push({
+                    question: i,
+                    title: questionTitles[questionKey],
+                    userAnswer,
+                    correctAnswer,
+                    isCorrect
+                });
+            }
+
+            const percentage = Math.round((correctCount / 50) * 100);
+            
+            // Store response
+            const response = {
+                name: studentName,
+                answers,
+                score: correctCount,
+                percentage,
+                timestamp: new Date().toLocaleString(),
+                detailedResults
+            };
+            
+            studentResponses.push(response);
+            localStorage.setItem('chm202Responses', JSON.stringify(studentResponses));
+
+            // Show results
+            displayResults(correctCount, percentage, detailedResults);
+            
+            // Show thank you message
+            document.getElementById('thankYouMessage').classList.add('show');
+            
+            // Scroll to results
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+            
+            // Update admin stats
+            updateAdminStats();
+        }
+
+        function displayResults(score, percentage, detailedResults) {
+            const resultsDiv = document.getElementById('results');
+            const scoreTitle = document.getElementById('scoreTitle');
+            const scoreText = document.getElementById('scoreText');
+            const detailedDiv = document.getElementById('detailedResults');
+
+            scoreText.innerHTML = `You scored ${score} out of 50 questions correct (${percentage}%)`;
+
+            // Style based on performance
+            resultsDiv.classList.remove('score-good', 'score-average', 'score-poor');
+            if (percentage >= 70) {
+                resultsDiv.classList.add('score-good');
+                scoreTitle.textContent = '🎉 Excellent Performance!';
+            } else if (percentage >= 50) {
+                resultsDiv.classList.add('score-average');
+                scoreTitle.textContent = '👍 Good Effort!';
+            } else {
+                resultsDiv.classList.add('score-poor');
+                scoreTitle.textContent = '📚 Keep Studying!';
+            }
+
+            // Show detailed results with explanations
+            let detailedHTML = '<h3>Question-by-Question Results:</h3>';
+            detailedResults.forEach(result => {
+                const statusClass = result.isCorrect ? 'correct' : 'incorrect';
